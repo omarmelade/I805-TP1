@@ -1,9 +1,9 @@
 /* package et imports */
-package fr.usmb.m1isc.compilation.simple;
+package fr.evaluator;
 import java_cup.runtime.Symbol;
 
 // nom de la classe a generer
-class SimpleParser;
+class Evaluator;
 
 /* inclusion du code */
 
@@ -14,16 +14,16 @@ action code {:
 
 parser code {:
     // pour le parser (redefinition de la methode reportant les erreurs d'analyse)
-    public void report_error(String message, Object info) {
+    /*public void report_error(String message, Object info) {
         String m = "";
         if (info instanceof java_cup.runtime.Symbol) {
             Symbol s = ((Symbol) info);
             if (s.left >= 0) {
-                /* Ajoute le numero de ligne  */
+                *//* Ajoute le numero de ligne  *//*
                 m = m + "Ligne " + (s.left+1) + " ";
             }
             if (s.right >= 0) {
-                /* Ajoute le numero de colonne  */
+                *//* Ajoute le numero de colonne  *//*
                 m = m + "Colonne " + (s.right+1) + " ";
             }
             if (s.left >=0  || s.right >= 0) {
@@ -40,17 +40,36 @@ parser code {:
 :};
 
 /* symboles terminaux */
-terminal VERBE, PRONOM, ADJECTIF, POINT;
+terminal Integer CHIFFRE;
+terminal PLUS, MINUS, TIMES, DIVIDE, UMINUS;
 terminal ERROR;
 
 /* non terminaux */
-non terminal phrase , texte;
+non terminal Integer expr;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
 
 /* grammaire */
 
-texte   ::= phrase texte
-          | phrase ;
-phrase  ::= PRONOM VERBE ADJECTIF {: System.out.println("OK"); :} POINT
-          | error POINT
-          ;
-
+expr   ::=
+        expr:e1 PLUS expr:e2
+          {: RESULT = e1 + e2; :}
+        |
+        expr:e1 MINUS expr:e2
+          {: RESULT = e1 - e2; :}
+        |
+        expr:e1 TIMES expr:e2
+          {: RESULT = e1 * e2; :}
+        |
+        expr:e1 DIVIDE expr:e2
+          {: RESULT = e1 / e2; :}
+        |
+        CHIFFRE:n
+          {: RESULT = n; :}
+        |
+        MINUS expr:e
+          {: RESULT = 0 - e; :}
+          %prec UMINUS
+       ;

@@ -1,19 +1,19 @@
 /* --------------------------Section de Code Utilisateur---------------------*/
-package fr.usmb.m1isc.compilation.simple;
+package fr.evaluator;
 import java_cup.runtime.Symbol;
 
 %%
 
 /* -----------------Section des Declarations et Options----------------------*/
 // nom de la class a generer
-%class SimpleLexer
+%class SimpleEvaluator
 %unicode
 %line   // numerotation des lignes
 %column // numerotation caracteres par ligne
 
 // utilisation avec CUP
 // nom de la classe generee par CUP qui contient les symboles terminaux
-%cupsym SimpleParserSym
+%cupsym EvaluatorSym
 // generation analyser lexical pour CUP
 %cup
 
@@ -23,21 +23,21 @@ import java_cup.runtime.Symbol;
 %}
 
 /* definitions regulieres */
-il      =   "Il"|"il"
-elle    =   "Elle"|"elle" 
-pronom  =   {il}|{elle}
-verbe   =   "est"|"boit"
-adj     =   "vite"|"beau"|"belle"|"bien"|"chaud"
-sep     =   \s
-point   =   [.?!;]
+CHIFFRE = [0-9]+;
+PLUS    = \+;
+MINUS   = \-;
+TIMES   = \*;
+DIVIDE  = \/;
+sep     = \s;
 
 %% 
 /* ------------------------Section des Regles Lexicales----------------------*/
 
 /* regles */
-{sep}+          { /* pas d'action */ }
-{pronom}        { return new Symbol(SimpleParserSym.PRONOM, yyline, yycolumn); }
-{verbe}         { return new Symbol(SimpleParserSym.VERBE, yyline, yycolumn); }
-{adj}           { return new Symbol(SimpleParserSym.ADJECTIF, yyline, yycolumn); }
-{point}         { return new Symbol(SimpleParserSym.POINT, yyline, yycolumn); }
-.               { return new Symbol(SimpleParserSym.ERROR, yyline, yycolumn); }
+{sep}+      { /* pas d'action */ }
+{CHIFFRE}   { return new Symbol(EvaluatorSym.CHIFFRE, yyline, yycolumn); }
+{PLUS}      { return new Symbol(EvaluatorSym.PLUS, yyline, yycolumn); }
+{MINUS}     { return new Symbol(EvaluatorSym.MINUS, yyline, yycolumn); }
+{TIMES}     { return new Symbol(EvaluatorSym.TIMES, yyline, yycolumn); }
+{DIVIDE}    { return new Symbol(EvaluatorSym.DIVIDE, yyline, yycolumn); }
+.           { return new Symbol(EvaluatorSym.ERROR, yyline, yycolumn); }
