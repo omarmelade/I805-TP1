@@ -7,6 +7,7 @@ import java_cup.runtime.Symbol;
 /* -----------------Section des Declarations et Options----------------------*/
 // nom de la class a generer
 %class SimpleEvaluator
+%standalone
 %unicode
 %line   // numerotation des lignes
 %column // numerotation caracteres par ligne
