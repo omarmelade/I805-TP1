@@ -7,7 +7,6 @@ import java_cup.runtime.Symbol;
 /* -----------------Section des Declarations et Options----------------------*/
 // nom de la class a generer
 %class SimpleEvaluator
-%standalone
 %unicode
 %line   // numerotation des lignes
 %column // numerotation caracteres par ligne
@@ -25,10 +24,10 @@ import java_cup.runtime.Symbol;
 
 /* definitions regulieres */
 CHIFFRE = [0-9]+;
-PLUS    = \+;
-MINUS   = \-;
-TIMES   = \*;
-DIVIDE  = \/;
+PLUS    = "+";
+MINUS   = "-";
+TIMES   = "*";
+DIVIDE  = "/";
 sep     = \s;
 
 %% 
@@ -42,4 +41,4 @@ sep     = \s;
 {TIMES}     { return new Symbol(EvaluatorSym.TIMES, yyline, yycolumn); }
 {DIVIDE}    { return new Symbol(EvaluatorSym.DIVIDE, yyline, yycolumn); }
 .           { return new Symbol(EvaluatorSym.ERROR, yyline, yycolumn); }
-";"			{ return new Symbol(sym.SEMI, yyline, yycolumn) ;}
+";"			{ return new Symbol(EvaluatorSym.SEMI, yyline, yycolumn) ;}

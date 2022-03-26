@@ -53,19 +53,19 @@ expr   ::=
         expr:e1 PLUS expr:e2
           {: RESULT = e1 + e2; :}
         |
-        expr:e1 MINUS expr:e2
-          {: RESULT = e1 - e2; :}
-        |
         expr:e1 TIMES expr:e2
           {: RESULT = e1 * e2; :}
         |
         expr:e1 DIVIDE expr:e2
           {: RESULT = e1 / e2; :}
         |
-        CHIFFRE:n
-          {: RESULT = n; :}
+        expr:e1 MINUS expr:e2
+          {: RESULT = e1 - e2; :}
         |
         MINUS expr:e
-          {: RESULT = 0 - e; :}
-          %prec UMINUS
+          {: RESULT = - e; :}
+        %prec UMINUS
+        |
+        CHIFFRE:n
+          {: RESULT = n; :}
        ;
