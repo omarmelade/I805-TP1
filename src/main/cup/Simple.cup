@@ -49,14 +49,6 @@ precedence left TIMES, DIVIDE;
 /* grammaire */
 
 // on a une liste d'expressions (avec au moins une expression)
-liste_expr	::= lexpr liste_expr
-			  | lexpr
-			  ;
-// chaque expression arithmetique est terminee par un point virgule (SEMI)
-lexpr 		::= expr:e SEMI:pv   {: if (! erreur) System.out.println("Ligne "+(pvleft+1)+", Colonne "+(pvright+1)+" : Eval = "+e); erreur = false; :}
-			  | error SEMI			   {: erreur = false; :}
-			  ;
-
 expr   ::=
         expr:e1 PLUS expr:e2
           {: RESULT = e1 + e2; :}

@@ -35,10 +35,11 @@ sep     = \s;
 /* ------------------------Section des Regles Lexicales----------------------*/
 
 /* regles */
-{sep}+      { /* pas d'action */ }
-{CHIFFRE}   { return new Symbol(EvaluatorSym.CHIFFRE, yyline, yycolumn); }
+{sep}      { /* pas d'action */ }
+{CHIFFRE}+   { return new Symbol(EvaluatorSym.CHIFFRE, yyline, yycolumn); }
 {PLUS}      { return new Symbol(EvaluatorSym.PLUS, yyline, yycolumn); }
 {MINUS}     { return new Symbol(EvaluatorSym.MINUS, yyline, yycolumn); }
 {TIMES}     { return new Symbol(EvaluatorSym.TIMES, yyline, yycolumn); }
 {DIVIDE}    { return new Symbol(EvaluatorSym.DIVIDE, yyline, yycolumn); }
 .           { return new Symbol(EvaluatorSym.ERROR, yyline, yycolumn); }
+";"			{ return new Symbol(sym.SEMI, yyline, yycolumn) ;}
