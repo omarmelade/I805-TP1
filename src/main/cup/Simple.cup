@@ -3,7 +3,7 @@ package fr.evaluator;
 import java_cup.runtime.Symbol;
 
 // nom de la classe a generer
-class Evaluator;
+class SimpleParser;
 
 /* inclusion du code */
 
@@ -15,18 +15,25 @@ action code {:
 
 parser code {:
     // pour le parser (redefinition de la methode reportant les erreurs d'analyse)
-    public void report_error(String message, Object info) {
+public void report_error(String message, Object info) {
         String m = "";
         if (info instanceof java_cup.runtime.Symbol) {
             Symbol s = ((Symbol) info);
-            if (s != null && s.left >= 0 ) {
-                /* Ajoute le numero de ligne  et de colonne*/
-                m =  "Ligne " + (s.left+1) + ", Colonne " + (s.right+1) + " : ";
-                }
+            if (s.left >= 0) {
+                /* Ajoute le numero de ligne  */
+                m = m + "Ligne " + (s.left+1) + " ";
             }
-        m = m + message;
-        System.err.println(m);
+            if (s.right >= 0) {
+                /* Ajoute le numero de colonne  */
+                m = m + "Colonne " + (s.right+1) + " ";
+            }
+            if (s.left >=0  || s.right >= 0) {
+                m = m + ": ";
+            }
         }
+        m = m + "Erreur de syntaxe";
+        System.out.println(m);
+    }
 :};
 
  init with {:
@@ -35,7 +42,7 @@ parser code {:
 
 /* symboles terminaux */
 terminal Integer CHIFFRE;
-terminal PLUS, MINUS, TIMES, DIVIDE, UMINUS, SEMI;
+terminal PLUS, MINUS, TIMES, DIVIDE, UMINUS, SEMI, PAR_OPEN, PAR_CLOSE, MOD;
 terminal ERROR;
 
 /* non terminaux */
@@ -44,17 +51,25 @@ non terminal liste_expr, lexpr;
 
 /* Precedences */
 precedence left PLUS, MINUS;
+precedence left MOD;
 precedence left TIMES, DIVIDE;
+precedence left UMINUS;
 
 /* grammaire */
-
+liste_expr	::= lexpr liste_expr
+			  | lexpr
+			  ;
+// chaque expression arithmetique est terminee par un point virgule (SEMI)
+lexpr 		::= expr:e {: if (! erreur) System.out.println("Eval = "+e); erreur = false; :} SEMI
+			  | error SEMI			   {: erreur = false; :}
+			  ;
 // on a une liste d'expressions (avec au moins une expression)
 expr   ::=
         expr:e1 PLUS expr:e2
-          {: RESULT = e1 + e2; :}
+          {: RESULT = new Integer(e1.intValue() + e2.intValue()); :}
         |
         expr:e1 TIMES expr:e2
-          {: RESULT = e1 * e2; :}
+          {: RESULT = new Integer(e1.intValue() * e2.intValue()); :}
         |
         expr:e1 DIVIDE expr:e2
           {: RESULT = e1 / e2; :}
@@ -63,9 +78,15 @@ expr   ::=
           {: RESULT = e1 - e2; :}
         |
         MINUS expr:e
-          {: RESULT = - e; :}
+          {: RESULT = new Integer(0 - e.intValue()); :}
         %prec UMINUS
         |
-        CHIFFRE:n
-          {: RESULT = n; :}
-       ;
+        CHIFFRE:e
+          {: RESULT = e; :}
+        |
+        expr:e1 MOD expr:e2
+          {: RESULT = new Integer(e1.intValue() % e2.intValue()); :}
+        |
+        PAR_OPEN expr:e PAR_CLOSE
+          {: RESULT = e; :}
+        ;

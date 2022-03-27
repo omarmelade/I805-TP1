@@ -6,14 +6,14 @@ import java_cup.runtime.Symbol;
 
 /* -----------------Section des Declarations et Options----------------------*/
 // nom de la class a generer
-%class SimpleEvaluator
+%class SimpleLexer
 %unicode
 %line   // numerotation des lignes
 %column // numerotation caracteres par ligne
 
 // utilisation avec CUP
 // nom de la classe generee par CUP qui contient les symboles terminaux
-%cupsym EvaluatorSym
+%cupsym SimpleParserSym
 // generation analyser lexical pour CUP
 %cup
 
@@ -34,11 +34,15 @@ sep     = \s;
 /* ------------------------Section des Regles Lexicales----------------------*/
 
 /* regles */
-{sep}      { /* pas d'action */ }
-{CHIFFRE}+   { return new Symbol(EvaluatorSym.CHIFFRE, yyline, yycolumn); }
-{PLUS}      { return new Symbol(EvaluatorSym.PLUS, yyline, yycolumn); }
-{MINUS}     { return new Symbol(EvaluatorSym.MINUS, yyline, yycolumn); }
-{TIMES}     { return new Symbol(EvaluatorSym.TIMES, yyline, yycolumn); }
-{DIVIDE}    { return new Symbol(EvaluatorSym.DIVIDE, yyline, yycolumn); }
-.           { return new Symbol(EvaluatorSym.ERROR, yyline, yycolumn); }
-";"			{ return new Symbol(EvaluatorSym.SEMI, yyline, yycolumn) ;}
+
+{CHIFFRE}   { return new Symbol(SimpleParserSym.CHIFFRE, yyline, yycolumn, new Integer(yytext())); }
+{PLUS}      { return new Symbol(SimpleParserSym.PLUS, yyline, yycolumn); }
+{MINUS}     { return new Symbol(SimpleParserSym.MINUS, yyline, yycolumn); }
+{TIMES}     { return new Symbol(SimpleParserSym.TIMES, yyline, yycolumn); }
+{DIVIDE}    { return new Symbol(SimpleParserSym.DIVIDE, yyline, yycolumn); }
+{PAR_OPEN}  { return new Symbol(SimpleParserSym.PAR_OPEN, yyline, yycolumn); }
+{PAR_CLOSE} { return new Symbol(SimpleParserSym.PAR_CLOSE, yyline, yycolumn); }
+{MOD}       { return new Symbol(SimpleParserSym.MOD, yyline, yycolumn); }
+";"			{ return new Symbol(SimpleParserSym.SEMI, yyline, yycolumn);   }
+\s+          { ; /* on fait rien */ }
+.           { return new Symbol(SimpleParserSym.ERROR, yyline, yycolumn); }
