@@ -1,5 +1,7 @@
 /* package et imports */
 package fr.evaluator;
+import java.util.*;
+import java.io.*;
 import java_cup.runtime.Symbol;
 
 // nom de la classe a generer
@@ -10,12 +12,14 @@ class SimpleParser;
 action code {:
     // pour utilisation dans les actions (classe action)
     private boolean erreur = false;
+
+    private Hashtable table = new Hashtable();
 :};
 
 
 parser code {:
     // pour le parser (redefinition de la methode reportant les erreurs d'analyse)
-public void report_error(String message, Object info) {
+    public void report_error(String message, Object info) {
         String m = "";
         if (info instanceof java_cup.runtime.Symbol) {
             Symbol s = ((Symbol) info);
@@ -42,48 +46,72 @@ public void report_error(String message, Object info) {
 
 /* symboles terminaux */
 terminal Integer CHIFFRE;
-terminal PLUS, MINUS, TIMES, DIVIDE, UMINUS, SEMI, PAR_OPEN, PAR_CLOSE, MOD;
+terminal PLUS, MINUS, TIMES, DIVIDE, UMINUS, SEMI, PAR_OPEN, PAR_CLOSE, MOD, LET, EQUAL;
+terminal String VARIABLE;
 terminal ERROR;
 
 /* non terminaux */
 non terminal Integer expr;
-non terminal liste_expr, lexpr;
+non terminal list_expr, lexpr, assign;
 
 /* Precedences */
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
+precedence left PAR_CLOSE, PAR_OPEN;
 precedence left UMINUS;
 
 /* grammaire */
-liste_expr	::= lexpr liste_expr
+list_expr	::= lexpr liste_expr
 			  | lexpr
 			  ;
+
+assign      ::= LET VARIABLE:v EQUAL expr:e
+                {: table.put(v, e ); :}
+              ;
+
 // chaque expression arithmetique est terminee par un point virgule (SEMI)
 lexpr 		::= expr:e {: if (! erreur) System.out.println("Eval = "+e); erreur = false; :} SEMI
+              | assign:v {: if (! erreur) System.out.println("Eval = "+e); erreur = false; :} SEMI
 			  | error SEMI			   {: erreur = false; :}
 			  ;
 // on a une liste d'expressions (avec au moins une expression)
 expr   ::=
         expr:e1 PLUS expr:e2
-          {: RESULT = new Integer(e1.intValue() + e2.intValue()); :}
+          {: RESULT = new Integer(e1 + e2); :}
         |
         expr:e1 MINUS expr:e2
-          {: RESULT =  new Integer(e1.intValue() - e2.intValue()); :}
+          {: RESULT =  new Integer(e1 - e2); :}
         |
         expr:e1 TIMES expr:e2
-          {: RESULT = new Integer(e1.intValue() * e2.intValue()); :}
+          {: RESULT = new Integer(e1 * e2); :}
         |
         expr:e1 DIVIDE expr:e2
-          {: RESULT = e1 / e2; :}
+          {:
+            if (e2.intValue() == 0) {
+                RESULT = 0;
+                erreur = true;
+                System.err.println("Erreur division par zero");
+            } else {
+                RESULT = new Integer(e1 / e2);
+            }
+          :}
         |
         expr:e1 MOD expr:e2
-          {: RESULT = new Integer(e1.intValue() % e2.intValue()); :}
+           {:
+                if (e2.intValue() == 0) {
+                    RESULT = 0;
+                    erreur = true;
+                    System.err.println("Erreur modulo par zero");
+                } else {
+                    RESULT = new Integer(e1 % e2);
+                }
+          :}
         |
         CHIFFRE:e
           {: RESULT = e; :}
         |
         MINUS expr:e
-          {: RESULT = new Integer(0 - e.intValue()); :}
+          {: RESULT = new Integer(0 - e); :}
         %prec UMINUS
         |
         PAR_OPEN expr:e PAR_CLOSE

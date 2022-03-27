@@ -30,7 +30,7 @@ TIMES   = "*";
 DIVIDE  = "/";
 sep     = \s;
 
-%% 
+%%
 /* ------------------------Section des Regles Lexicales----------------------*/
 
 /* regles */
@@ -43,6 +43,9 @@ sep     = \s;
 {PAR_OPEN}  { return new Symbol(SimpleParserSym.PAR_OPEN, yyline, yycolumn); }
 {PAR_CLOSE} { return new Symbol(SimpleParserSym.PAR_CLOSE, yyline, yycolumn); }
 {MOD}       { return new Symbol(SimpleParserSym.MOD, yyline, yycolumn); }
+{EQUAL}     { return new Symbol(SimpleParserSym.EQUAL, yyline, yycolumn); }
+{VARIABLE}  { return new Symbol(SimpleParserSym.VARIABLE, yyline, yycolumn, new String(yytext())); }
+{LET}       { return new Symbol(SimpleParserSym.LET, yyline, yycolumn); }
 ";"			{ return new Symbol(SimpleParserSym.SEMI, yyline, yycolumn);   }
 {COMMENTARY} {  ; /* on fait rien */ }
 \s+          { ; /* on fait rien */ }
