@@ -44,5 +44,6 @@ sep     = \s;
 {PAR_CLOSE} { return new Symbol(SimpleParserSym.PAR_CLOSE, yyline, yycolumn); }
 {MOD}       { return new Symbol(SimpleParserSym.MOD, yyline, yycolumn); }
 ";"			{ return new Symbol(SimpleParserSym.SEMI, yyline, yycolumn);   }
+{COMMENTARY} {  ; /* on fait rien */ }
 \s+          { ; /* on fait rien */ }
 .           { return new Symbol(SimpleParserSym.ERROR, yyline, yycolumn); }
