@@ -11,7 +11,7 @@ class SimpleParser;
 
 action code {:
     private boolean erreur = false;
-    private HashMap<String,Integer> table = new HashMap<>();
+    private  Hashtable<String, Integer> table= new Hashtable<String, Integer>();
 :};
 
 
@@ -72,7 +72,7 @@ lexpr 		::= expr:e SEMI
 			  ;
 
 assign      ::= LET VARIABLE:v EQUAL expr:e
-                {: if(!erreur) { table.put(v, e ); } System.out.println("loool"); :}
+                {: if(!erreur) { table.put(v, e ); } :}
               ;
 
 // on a une liste d'expressions (avec au moins une expression)
