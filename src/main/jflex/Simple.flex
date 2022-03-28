@@ -35,7 +35,7 @@ sep     = \s;
 
 /* regles */
 
-{CHIFFRE}   { return new Symbol(SimpleParserSym.CHIFFRE, yyline, yycolumn, new Integer(yytext())); }
+{INTEGER}   { return new Symbol(SimpleParserSym.INTEGER, yyline, yycolumn, new Integer(yytext())); }
 {PLUS}      { return new Symbol(SimpleParserSym.PLUS, yyline, yycolumn); }
 {MINUS}     { return new Symbol(SimpleParserSym.MINUS, yyline, yycolumn); }
 {TIMES}     { return new Symbol(SimpleParserSym.TIMES, yyline, yycolumn); }
@@ -44,9 +44,9 @@ sep     = \s;
 {PAR_CLOSE} { return new Symbol(SimpleParserSym.PAR_CLOSE, yyline, yycolumn); }
 {MOD}       { return new Symbol(SimpleParserSym.MOD, yyline, yycolumn); }
 {EQUAL}     { return new Symbol(SimpleParserSym.EQUAL, yyline, yycolumn); }
-{VARIABLE}  { return new Symbol(SimpleParserSym.VARIABLE, yyline, yycolumn, new String(yytext())); }
-{LET}       { return new Symbol(SimpleParserSym.LET, yyline, yycolumn); }
+{VARIABLE}  { return new Symbol(SimpleParserSym.VARIABLE, yyline, yycolumn, new String(yytext())) ;}
 ";"			{ return new Symbol(SimpleParserSym.SEMI, yyline, yycolumn);   }
+{LET}       { return new Symbol(SimpleParserSym.LET, yyline, yycolumn); }
 {COMMENTARY} {  ; /* on fait rien */ }
 \s+          { ; /* on fait rien */ }
 .           { return new Symbol(SimpleParserSym.ERROR, yyline, yycolumn); }
